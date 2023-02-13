@@ -9,6 +9,8 @@ class Hash{
 public:
 
   Hash(int capacity);
+
+  int getSize();
   
   int hashFunction(int data);
 
@@ -16,7 +18,9 @@ public:
 
   void addNode(Node* data, Node* next, int slot);
 
-  void printHash(int slot);
+  void printHash(int slot, Node* current);
+
+  bool mustRehash(int slot);
 
 private:
   int key;

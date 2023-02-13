@@ -3,8 +3,8 @@
 
 using namespace std;
 
-Node::Node(Student * student){
-  student = student;
+Node::Node(Student * studentin){
+  student = studentin;
   next = NULL;
 }
 Node::~Node(){

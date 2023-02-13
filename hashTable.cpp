@@ -8,18 +8,22 @@
 #include <cmath>
 #include <time.h>
 #include "Hash.h"
+#include <vector>
 
 using namespace std;
 
 void add(Hash* current, Node* newNode);
 void print(Hash* current);
+bool checkRehash(Hash* current);
 
 
 
 int main(){
   bool running = true;
-  Hash* current = new Hash(100);
-
+  Hash* initialHash = new Hash(100);
+  Hash* current = initialHash;
+  vector<Node*> nodeList;
+  
   while(running){
     //read in user input
     char input[10];
@@ -62,19 +66,49 @@ int main(){
      
   
       Node* newNode = new Node(newStudent);
+      nodeList.push_back(newNode); //add node to node list
       add(current, newNode);
 
     }else if(strcmp(input, "PRINT") == 0){//print the list
-
+      print(current);
     }else if(strcmp(input, "DELETE") == 0){//delete a node/student
 
       
     }else if(strcmp(input, "QUIT") == 0){//quit the program
       running = false;
     }
+    //check for too  many elements
+    if(checkRehash(current)){//if it needs to be rehashed
+      //find new size:
+      int size = current->getSize() * 2;
+
+      //delte initial hash:
+      delete initialHash;
+      current = new Hash(size);
+  
+      //input nodes again:
+      vector<Node*>::iterator ptr;
+      for(ptr = nodeList.begin(); ptr < nodeList.end(); ptr++){
+	cout << "adding" << endl;
+	cout << (*ptr)->getStudent()->getName() << endl;
+	add(current, *ptr);
+      }
+      
+      cout << "REHASHING..." << endl;
+      
+    }
   }
 
   return 0;
+}
+
+bool checkRehash(Hash* current){
+  for(int i = 0; i < current->getSize(); i++){
+    if(current->mustRehash(i)){
+      return true;
+    }
+  }
+  return false;
 }
 
 void add(Hash* current, Node* newNode){
@@ -85,6 +119,9 @@ void add(Hash* current, Node* newNode){
 
 
 void print(Hash* current){
+  for(int i = 0; i < current->getSize(); i++){
+    current->printHash(i, NULL);
+  }
   
 }
 
