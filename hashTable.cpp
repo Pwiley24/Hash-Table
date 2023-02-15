@@ -13,6 +13,7 @@
 using namespace std;
 
 void add(Hash* current, Node* newNode);
+void deleteStudent(Hash* current, int id);
 void print(Hash* current);
 bool checkRehash(Hash* current);
 
@@ -64,15 +65,21 @@ int main(){
       newStudent->setGpa(gpa);
 
      
-  
+    
       Node* newNode = new Node(newStudent);
+      cout << newNode->getStudent()->getId() << endl;
       nodeList.push_back(newNode); //add node to node list
       add(current, newNode);
 
     }else if(strcmp(input, "PRINT") == 0){//print the list
       print(current);
     }else if(strcmp(input, "DELETE") == 0){//delete a node/student
-
+      int id = 0;
+      cout << "What is the ID number?" << endl;
+      cin >> id;
+      cin.ignore(20, '\n');
+      cout << id << endl;
+      deleteStudent(current, id);
       
     }else if(strcmp(input, "QUIT") == 0){//quit the program
       running = false;
@@ -83,6 +90,9 @@ int main(){
       int size = current->getSize() * 2;
 
       //delte initial hash:
+      for(int i = 0; i < initialHash->getSize(); i++){
+	initialHash->resetNodes(i, NULL);
+      }
       delete initialHash;
       current = new Hash(size);
   
@@ -101,6 +111,13 @@ int main(){
 
   return 0;
 }
+
+void deleteStudent(Hash* current, int id){
+  cout << "id" << id << " " << current->hashFunction(id) << endl;
+  current->deleteNode(id, current->hashFunction(id), NULL, NULL);
+  
+}
+
 
 bool checkRehash(Hash* current){
   for(int i = 0; i < current->getSize(); i++){
