@@ -95,6 +95,7 @@ int Hash::getSize(){
 
 void Hash::resetNodes(int slot, Node* current){
   if(current == NULL){
+    cout << table[slot]->getStudent()->getName() << endl;
     table[slot] = current;
   }
   Node* tempNode = current;

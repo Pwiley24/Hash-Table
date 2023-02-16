@@ -7,13 +7,14 @@
 #include <cstring>
 #include <cmath>
 #include <time.h>
+#include <fstream>
 #include "Hash.h"
 #include <vector>
 
 using namespace std;
 
-void add(Hash* current, Node* newNode);
-void deleteStudent(Hash* current, int id);
+void add(Hash*& current, Node* newNode);
+void deleteStudent(Hash*& current, int id);
 void print(Hash* current);
 bool checkRehash(Hash* current);
 
@@ -24,6 +25,38 @@ int main(){
   Hash* initialHash = new Hash(100);
   Hash* current = initialHash;
   vector<Node*> nodeList;
+
+  int getId = 1;
+  
+  char* line = new char[100];
+  char firstNameArr[100];
+  vector<char*> firstNames;
+  ifstream firstFile("firstName.txt");
+  if(firstFile.is_open()){
+    while(firstFile >> firstNameArr){
+      line = new char[100];
+      strcpy(line, firstNameArr);
+      firstNames.push_back(line);
+    }
+    firstFile.close();
+  }else{
+    cout << "File could not be open!" << endl;
+  }
+
+  char lastNameArr[100];
+  vector<char*> lastNames;
+  ifstream lastFile("lastName.txt");
+  if(lastFile.is_open()){
+    while(lastFile >> lastNameArr){
+      line = new char[100];
+      strcpy(line, lastNameArr);
+      lastNames.push_back(line);
+    }
+    lastFile.close();
+  }else{
+    cout << "File could not be open!" << endl;
+  }
+
   
   while(running){
     //read in user input
@@ -34,7 +67,8 @@ int main(){
 
     if(strcmp(input, "ADD") == 0){//user wants to add
       Student* newStudent = new Student();
-    
+
+      
       //get name
       char name[20];
       cout << "What is the student's first name?" << endl;
@@ -47,14 +81,37 @@ int main(){
       cin.get(last, 20);
       cin.ignore(20, '\n');
       newStudent->setLast(last);
-    
-      //get ID:
-      int id = 0;
-      cout << "What is the student's ID?" << endl;
-      cin >> id;
-      cin.ignore(20, '\n');
-      newStudent->setId(id);
+      
 
+      /*
+      //first name  
+      int randomNumFirst = rand() % 28 + 1;
+      char* firstNameGet = firstNames.at(randomNumFirst);
+      char firstNameFinal[100];
+      strcpy(firstNameFinal, firstNameGet);
+      cout << firstNameFinal << endl;
+      newStudent->setName(firstNameFinal);
+
+      //last name
+      int randomNumLast = rand() % 12 + 1;
+      char* lastNameGet = lastNames.at(randomNumLast);
+      char lastNameFinal[100];
+      strcpy(lastNameFinal, lastNameGet);
+      cout << lastNameFinal << endl;
+      newStudent->setLast(lastNameFinal);
+      
+      
+      //get ID:
+      newStudent->setId(getId);
+      getId++;
+      */
+
+      cout << "what is there id" << endl;
+      int getId;
+      cin >> getId;
+      cin.ignore(20, '\n');
+      newStudent->setId(getId);
+      
       //get GPA:
       srand(time(NULL));
       int randInt = (rand() % 400);
@@ -112,7 +169,7 @@ int main(){
   return 0;
 }
 
-void deleteStudent(Hash* current, int id){
+void deleteStudent(Hash*& current, int id){
   cout << "id" << id << " " << current->hashFunction(id) << endl;
   current->deleteNode(id, current->hashFunction(id), NULL, NULL);
   
@@ -128,7 +185,7 @@ bool checkRehash(Hash* current){
   return false;
 }
 
-void add(Hash* current, Node* newNode){
+void add(Hash*& current, Node* newNode){
   int key = current->hashFunction(newNode->getStudent()->getId());
   current->addData(newNode, key);
 }

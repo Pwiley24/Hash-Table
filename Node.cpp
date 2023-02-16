@@ -8,7 +8,6 @@ Node::Node(Student * studentin){
   next = NULL;
 }
 Node::~Node(){
-  delete &student;
   next = NULL;
 }
 
