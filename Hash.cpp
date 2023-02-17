@@ -119,5 +119,4 @@ void Hash::resetTable(){
   for(int i = 0; i < tableSize; i++){
     table[i] == NULL;
   }
-  cout << tableSize << endl;
 }
