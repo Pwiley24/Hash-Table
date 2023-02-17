@@ -25,7 +25,7 @@ void Hash::deleteNode(int id, int slot, Node* current, Node* previous){
       delete table[slot];
       table[slot] = tempNode;
     }else{
-      deleteNode(id, slot, tempNode, NULL);
+      deleteNode(id, slot, tempNode, table[slot]);
     }
   }else{//not element in list
     if(current->getStudent()->getId() == id){//node to delete
@@ -65,10 +65,7 @@ void Hash::addNode(Node* data, Node* next, int slot){
 
 
   
-  //if slot in table is NULL add node
-  //if slot has more nodes recurse through
-  //keep track of recursions (more than three)
-  //when it gets to NULL next 
+
 }
 
 
@@ -94,15 +91,17 @@ int Hash::getSize(){
 }
 
 void Hash::resetNodes(int slot, Node* current){
-  if(current == NULL){
+  if(current == NULL &&
+     table[slot] != NULL){
     cout << table[slot]->getStudent()->getName() << endl;
-    table[slot] = current;
+    current = table[slot];
   }
-  Node* tempNode = current;
-  tempNode->setNext(current->getNext());
-  current->setNext(NULL);
-  if(tempNode->getNext() != NULL){
-    resetNodes(slot, tempNode->getNext());
+  if(current != NULL){ //table[slot] wasn't null either
+    Node* tempNode = current->getNext();
+    current->setNext(NULL);
+    if(tempNode != NULL){
+      resetNodes(slot, tempNode);
+    }
   }
 }
 
@@ -113,4 +112,12 @@ bool Hash::mustRehash(int slot){
     return true;
   }
   return false;
+}
+
+
+void Hash::resetTable(){
+  for(int i = 0; i < tableSize; i++){
+    table[i] == NULL;
+  }
+  cout << tableSize << endl;
 }

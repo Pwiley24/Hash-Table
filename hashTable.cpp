@@ -17,17 +17,19 @@ void add(Hash*& current, Node* newNode);
 void deleteStudent(Hash*& current, int id);
 void print(Hash* current);
 bool checkRehash(Hash* current);
+Student* getRandStudent(Student*& newStudent, vector<char*> firstnames, vector<char*> lastNames, vector<Node*> nodeList, int &randId); 
 
 
 
 int main(){
+  srand(time(NULL));
+  int randId = 1;
   bool running = true;
   Hash* initialHash = new Hash(100);
   Hash* current = initialHash;
   vector<Node*> nodeList;
 
-  int getId = 1;
-  
+  //read in first names
   char* line = new char[100];
   char firstNameArr[100];
   vector<char*> firstNames;
@@ -42,7 +44,8 @@ int main(){
   }else{
     cout << "File could not be open!" << endl;
   }
-
+  
+  //read in last names
   char lastNameArr[100];
   vector<char*> lastNames;
   ifstream lastFile("lastName.txt");
@@ -57,6 +60,7 @@ int main(){
     cout << "File could not be open!" << endl;
   }
 
+
   
   while(running){
     //read in user input
@@ -66,68 +70,72 @@ int main(){
     cin.ignore(10, '\n');
 
     if(strcmp(input, "ADD") == 0){//user wants to add
-      Student* newStudent = new Student();
-
-      
-      //get name
-      char name[20];
-      cout << "What is the student's first name?" << endl;
-      cin.get(name, 20);
-      cin.ignore(20, '\n');
-      newStudent->setName(name);
-
-      char last[20];
-      cout << "What is the student's last name?" << endl;
-      cin.get(last, 20);
-      cin.ignore(20, '\n');
-      newStudent->setLast(last);
-      
-
-      /*
-      //first name  
-      int randomNumFirst = rand() % 28 + 1;
-      char* firstNameGet = firstNames.at(randomNumFirst);
-      char firstNameFinal[100];
-      strcpy(firstNameFinal, firstNameGet);
-      cout << firstNameFinal << endl;
-      newStudent->setName(firstNameFinal);
-
-      //last name
-      int randomNumLast = rand() % 12 + 1;
-      char* lastNameGet = lastNames.at(randomNumLast);
-      char lastNameFinal[100];
-      strcpy(lastNameFinal, lastNameGet);
-      cout << lastNameFinal << endl;
-      newStudent->setLast(lastNameFinal);
-      
-      
-      //get ID:
-      newStudent->setId(getId);
-      getId++;
-      */
-
-      cout << "what is there id" << endl;
-      int getId;
-      cin >> getId;
-      cin.ignore(20, '\n');
-      newStudent->setId(getId);
-      
-      //get GPA:
-      srand(time(NULL));
-      int randInt = (rand() % 400);
-      float randNum = (float)(randInt) / 100;
-      cout << randNum << endl;
-      float gpa = round(randNum * 100) / 100;
-      cout << "GPA: " << gpa << endl;
-      newStudent->setGpa(gpa);
-
      
-    
-      Node* newNode = new Node(newStudent);
-      cout << newNode->getStudent()->getId() << endl;
-      nodeList.push_back(newNode); //add node to node list
-      add(current, newNode);
+      
+      cout << "Would you like to randomally add?" << endl;
+      char yn;
+      cin >> yn;
+      cin.ignore(3, '\n');
 
+      if(yn == 'y'){
+	cout << "How many students?" << endl;
+	int num;
+	cin >> num;
+	cin.ignore(10, '\n');
+	for(int i = 0; i < num; i++){
+	  Student* newStudent = new Student();
+	  getRandStudent(newStudent, firstNames, lastNames, nodeList, randId);
+	  Node* newNode = new Node(newStudent);
+	  cout << newNode->getStudent()->getId() << endl;
+	  nodeList.push_back(newNode); //add node to node list
+	  add(current, newNode);
+	  cout << "here" << endl;
+	}
+
+      }else{
+	Student* newStudent = new Student();
+	//get name
+	char name[20];
+	cout << "What is the student's first name?" << endl;
+	cin.get(name, 20);
+	cin.ignore(20, '\n');
+	newStudent->setName(name);
+
+	char last[20];
+	cout << "What is the student's last name?" << endl;
+	cin.get(last, 20);
+	cin.ignore(20, '\n');
+	newStudent->setLast(last);
+      
+
+	//ID:
+	cout << "what is there id" << endl;
+	int manId;
+	cin >> manId;
+	cin.ignore(20, '\n');
+	newStudent->setId(manId);
+
+       
+      
+	//get GPA:
+	cout << "what is their GPA?" << endl;
+	float gpa;
+	cin >> gpa;
+	cin.ignore(10, '\n');
+	gpa = round(gpa * 100) / 100;
+	cout << gpa << endl;
+	newStudent->setGpa(gpa);
+     
+ 
+	Node* newNode = new Node(newStudent);
+	cout << newNode->getStudent()->getId() << endl;
+	nodeList.push_back(newNode); //add node to node list
+	add(current, newNode);
+	
+      }
+
+
+    
     }else if(strcmp(input, "PRINT") == 0){//print the list
       print(current);
     }else if(strcmp(input, "DELETE") == 0){//delete a node/student
@@ -143,16 +151,22 @@ int main(){
     }
     //check for too  many elements
     if(checkRehash(current)){//if it needs to be rehashed
+      cout << "rehashing before" << endl;
       //find new size:
       int size = current->getSize() * 2;
 
+      initialHash = current;
+      
       //delte initial hash:
       for(int i = 0; i < initialHash->getSize(); i++){
 	initialHash->resetNodes(i, NULL);
       }
+      
       delete initialHash;
       current = new Hash(size);
-  
+
+      current->resetTable();
+      
       //input nodes again:
       vector<Node*>::iterator ptr;
       for(ptr = nodeList.begin(); ptr < nodeList.end(); ptr++){
@@ -168,6 +182,48 @@ int main(){
 
   return 0;
 }
+
+
+Student* getRandStudent(Student*& newStudent, vector<char*> firstNames, vector<char*> lastNames, vector<Node*> nodeList, int &randId){
+  //first name
+  int randomNumFirst = rand() % 28;
+  char* firstNameGet = firstNames.at(randomNumFirst);
+  char firstNameFinal[100];
+  strcpy(firstNameFinal, firstNameGet);
+  cout << firstNameFinal << endl;
+  newStudent->setName(firstNameFinal);
+
+  //last name
+  int randomNumLast = rand() % 13;
+  char* lastNameGet = lastNames.at(randomNumLast);
+  char lastNameFinal[100];
+  strcpy(lastNameFinal, lastNameGet);
+  cout << lastNameFinal << endl;
+  newStudent->setLast(lastNameFinal);
+
+
+  //get ID:
+  vector<Node*>::iterator ptr;
+  for(ptr = nodeList.begin(); ptr < nodeList.end(); ptr++){
+    while((*ptr)->getStudent()->getId() == randId){
+      randId++;
+    }
+  }
+  newStudent->setId(randId);
+
+  //get GPA:
+  int randInt = (rand() % 400);
+  float randNum = (float)(randInt) / 100;
+  float gpa = round(randNum * 100) / 100;
+  cout << "GPA: " << gpa << endl;
+  newStudent->setGpa(gpa);
+
+  return newStudent;
+
+
+  
+}
+
 
 void deleteStudent(Hash*& current, int id){
   cout << "id" << id << " " << current->hashFunction(id) << endl;

@@ -2,6 +2,7 @@
 #define HASH_H
 #include "Node.h"
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -25,6 +26,8 @@ public:
   bool mustRehash(int slot);
 
   void resetNodes(int slot, Node* current);
+
+  void resetTable();
   
   int key;
   int tableSize;
