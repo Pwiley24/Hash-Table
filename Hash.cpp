@@ -11,17 +11,13 @@ Hash::Hash(int capacity){
 }
 
 void Hash::deleteNode(int id, int slot, Node* current, Node* previous){
-  cout << "id inside " << id << " " << slot << endl;
   //delete first element:
   Node* tempNode;
   if(current == NULL &&
      table[slot] != NULL){
     current = table[slot];
-    cout << table[slot]->getStudent()->getId() << endl;
     tempNode = table[slot]->getNext();
-    cout << tempNode << endl;
     if(table[slot]->getStudent()->getId() == id){//node to delete
-      cout << "deleting first node" << endl;
       delete table[slot];
       table[slot] = tempNode;
     }else{
@@ -72,14 +68,17 @@ void Hash::addNode(Node* data, Node* next, int slot){
 void Hash::printHash(int slot, Node* current){
   if(table[slot] != NULL){//there are nodes to print
     if(current == NULL){//first print
-      cout << "first print" << endl;
       current = table[slot];
-      cout << table[slot]->getStudent()->getId() << ", " << table[slot]->getStudent()->getName() << endl;
+      cout << table[slot]->getStudent()->getId() << ", " << 
+table[slot]->getStudent()->getName() << " " << 
+table[slot]->getStudent()->getLast() << ", " << 
+table[slot]->getStudent()->getGpa() << endl;
     }else {
-      cout << "not first print" << endl;
-      cout << current->getStudent()->getId() << ", " << current->getStudent()->getName() << endl;
+      cout << current->getStudent()->getId() << ", " << 
+current->getStudent()->getName() << " " << 
+current->getStudent()->getLast() << ", " << 
+current->getStudent()->getGpa() << endl;
     }
-    // cout << current->getNext()->getStudent()->getName() << endl;
     if(current->getNext() != NULL){//more nodes to print
       printHash(slot, current->getNext());
     }
@@ -93,7 +92,6 @@ int Hash::getSize(){
 void Hash::resetNodes(int slot, Node* current){
   if(current == NULL &&
      table[slot] != NULL){
-    cout << table[slot]->getStudent()->getName() << endl;
     current = table[slot];
   }
   if(current != NULL){ //table[slot] wasn't null either
@@ -117,6 +115,6 @@ bool Hash::mustRehash(int slot){
 
 void Hash::resetTable(){
   for(int i = 0; i < tableSize; i++){
-    table[i] == NULL;
+    table[i] = NULL;
   }
 }

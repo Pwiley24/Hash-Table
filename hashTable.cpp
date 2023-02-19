@@ -1,7 +1,7 @@
 /*
  * This program creates a node list of students that stores their name, id, and gpa.
  * Author: Paige Wiley
- * Date: 1-27-2023
+ * Date: 2-18-2023
  */
 #include <iostream>
 #include <cstring>
@@ -65,7 +65,7 @@ int main(){
   while(running){
     //read in user input
     char input[10];
-    cout << "Enter a command: (ADD, PRINT, DELETE, AVERAGE, QUIT)" << endl;
+    cout << "Enter a command: (ADD, PRINT, DELETE, QUIT)" << endl;
     cin.get(input, 10);
     cin.ignore(10, '\n');
 
@@ -86,10 +86,8 @@ int main(){
 	  Student* newStudent = new Student();
 	  getRandStudent(newStudent, firstNames, lastNames, nodeList, randId);
 	  Node* newNode = new Node(newStudent);
-	  cout << newNode->getStudent()->getId() << endl;
 	  nodeList.push_back(newNode); //add node to node list
 	  add(current, newNode);
-	  cout << "here" << endl;
 	}
 
       }else{
@@ -123,12 +121,10 @@ int main(){
 	cin >> gpa;
 	cin.ignore(10, '\n');
 	gpa = round(gpa * 100) / 100;
-	cout << gpa << endl;
 	newStudent->setGpa(gpa);
      
  
 	Node* newNode = new Node(newStudent);
-	cout << newNode->getStudent()->getId() << endl;
 	nodeList.push_back(newNode); //add node to node list
 	add(current, newNode);
 	
@@ -143,7 +139,6 @@ int main(){
       cout << "What is the ID number?" << endl;
       cin >> id;
       cin.ignore(20, '\n');
-      cout << id << endl;
       deleteStudent(current, id);
       
     }else if(strcmp(input, "QUIT") == 0){//quit the program
@@ -151,7 +146,6 @@ int main(){
     }
     //check for too  many elements
     if(checkRehash(current)){//if it needs to be rehashed
-      cout << "rehashing before" << endl;
       //find new size:
       int size = current->getSize() * 2;
 
@@ -170,13 +164,8 @@ int main(){
       //input nodes again:
       vector<Node*>::iterator ptr;
       for(ptr = nodeList.begin(); ptr < nodeList.end(); ptr++){
-	cout << "adding" << endl;
-	cout << (*ptr)->getStudent()->getName() << endl;
 	add(current, *ptr);
       }
-      
-      cout << "REHASHING..." << endl;
-      
     }
   }
 
@@ -190,7 +179,6 @@ Student* getRandStudent(Student*& newStudent, vector<char*> firstNames, vector<c
   char* firstNameGet = firstNames.at(randomNumFirst);
   char firstNameFinal[100];
   strcpy(firstNameFinal, firstNameGet);
-  cout << firstNameFinal << endl;
   newStudent->setName(firstNameFinal);
 
   //last name
@@ -198,7 +186,6 @@ Student* getRandStudent(Student*& newStudent, vector<char*> firstNames, vector<c
   char* lastNameGet = lastNames.at(randomNumLast);
   char lastNameFinal[100];
   strcpy(lastNameFinal, lastNameGet);
-  cout << lastNameFinal << endl;
   newStudent->setLast(lastNameFinal);
 
 
@@ -209,13 +196,17 @@ Student* getRandStudent(Student*& newStudent, vector<char*> firstNames, vector<c
       randId++;
     }
   }
+  for(ptr = nodeList.begin(); ptr < nodeList.end(); ptr++){
+    if(randId == (*ptr)->getStudent()->getId()){
+      randId++;
+    }
+  }
   newStudent->setId(randId);
 
   //get GPA:
   int randInt = (rand() % 400);
   float randNum = (float)(randInt) / 100;
   float gpa = round(randNum * 100) / 100;
-  cout << "GPA: " << gpa << endl;
   newStudent->setGpa(gpa);
 
   return newStudent;
@@ -226,7 +217,6 @@ Student* getRandStudent(Student*& newStudent, vector<char*> firstNames, vector<c
 
 
 void deleteStudent(Hash*& current, int id){
-  cout << "id" << id << " " << current->hashFunction(id) << endl;
   current->deleteNode(id, current->hashFunction(id), NULL, NULL);
   
 }
